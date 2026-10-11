@@ -1,6 +1,6 @@
 # claude-plugins
 
-Mes plugins [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), regroupés par usage, plus un script pour les installer, les réinstaller ou les mettre à jour sur n'importe quelle machine (macOS, Linux, WSL, Windows).
+Mes plugins de *harnais* [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) — méthode, comportement, revue, design, LSP, sécurité — regroupés par usage, plus un script pour les installer, les réinstaller ou les mettre à jour sur n'importe quelle machine (macOS, Linux, WSL, Windows).
 
 ## Installation rapide
 
@@ -16,29 +16,38 @@ irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1 | ie
 
 Ou en local, après un `git clone` :
 ```bash
-./install.sh            # ajoute les marketplaces manquantes, installe les plugins manquants, met à jour les autres
-./install.sh --export   # réécrit plugins.txt à partir des plugins installés sur cette machine
+./install.sh                  # tous les plugins : installe ceux qui manquent, met à jour les autres
+./install.sh caveman serena   # seulement les plugins nommés
+./install.sh --pick           # liste numérotée, réponds par ex. "1 4 7-9" ou "all"
+./install.sh --export         # ajoute à plugins.txt les plugins installés ici mais pas encore listés
 ```
-(`.\install.ps1` et `.\install.ps1 -Export` sous Windows.)
+Windows : `.\install.ps1`, `.\install.ps1 caveman serena`, `.\install.ps1 -Pick`, `.\install.ps1 -Export`.
+
+Choisir depuis la commande à distance :
+```bash
+curl -fsSL https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.sh | bash -s -- --pick
+```
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1))) -Pick
+```
 
 Le script peut être relancé sans risque : ce qui est déjà installé est seulement mis à jour. Redémarre ensuite Claude Code (ou lance `/reload-plugins`).
 
 ### Synchroniser plusieurs machines
 
-1. Sur la machine de référence : `./install.sh --export`, puis commit et push de `plugins.txt`.
+1. Sur la machine de référence : `./install.sh --export`, vérifie les ajouts, puis commit et push de `plugins.txt`.
 2. Sur les autres machines : `git pull && ./install.sh`.
 
 `plugins.txt` est la seule source de vérité. Format :
 ```
 marketplace <nom> <source>     # source = owner/repo GitHub, URL git, ou builtin
-plugin <nom>@<marketplace>
+plugin <nom>@<marketplace>     # installé et mis à jour par le script
+exclude <nom>@<marketplace>    # installé sur ma machine mais hors du dépôt ; --export ne le rajoute jamais
 ```
+Les connecteurs vers des services tiers (Stripe, Supabase, GitHub, Notion…) sont en `exclude` : ce dépôt ne garde que le harnais.
 
 ### Après installation
 
-- **github** : le serveur MCP lit `GITHUB_PERSONAL_ACCESS_TOKEN`. Avec le CLI `gh`, ajoute dans ton profil shell :
-  `export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token 2>/dev/null)"`
-- **Services hébergés** (Notion, Slack, Linear, Sentry, Stripe, Supabase…) : authentifie-toi via `/mcp` dans Claude Code.
 - **Plugins LSP** : ils ont besoin du serveur de langage correspondant dans le `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
 - Le script clone en HTTPS : une clé SSH n'est pas nécessaire.
 
@@ -95,13 +104,11 @@ plugin <nom>@<marketplace>
 | ruby-lsp | Serveur de langage Ruby | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ruby-lsp) |
 | vue-volar | Serveur de langage Vue.js (Volar) | [Piebald-AI/claude-code-lsps](https://github.com/Piebald-AI/claude-code-lsps) |
 
-### Sécurité et monitoring
+### Sécurité
 | Plugin | Rôle | Source |
 |---|---|---|
 | claude-security | Scan de vulnérabilités du code, avec génération de patchs vérifiés | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) |
 | security-guidance | Alertes de sécurité pendant l'édition et revue du diff en fin de tour | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
-| sentry | Erreurs Sentry : issues, stack traces, analyse et correction | [getsentry/plugin-claude](https://github.com/getsentry/plugin-claude) |
-| sentry-cli | Skills pour piloter Sentry en ligne de commande | [getsentry/cli](https://github.com/getsentry/cli) |
 
 ### Navigateur, tests et documentation
 | Plugin | Rôle | Source |
@@ -110,50 +117,15 @@ plugin <nom>@<marketplace>
 | chrome-devtools-mcp | Contrôle et inspection d'un Chrome réel : réseau, performance, console | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
 | context7 | Documentation à jour des librairies et frameworks | [upstash/context7](https://github.com/upstash/context7) |
 
-### Cloud, bases de données et backend
-| Plugin | Rôle | Source |
-|---|---|---|
-| aws-core | Construire, déployer et opérer sur AWS : IaC, services, IAM, coûts | [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) |
-| cloudflare | Workers, Durable Objects, Agents SDK, Wrangler et plateforme Cloudflare | [cloudflare/skills](https://github.com/cloudflare/skills) |
-| supabase | MCP Supabase : base, auth, stockage, temps réel | [supabase-community/supabase-plugin](https://github.com/supabase-community/supabase-plugin) |
-| neon-postgres | Postgres serverless Neon : branches, auth, stockage, MCP | [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills) |
-| mongodb | MCP et skills MongoDB : requêtes, schémas, index, Atlas | [mongodb/agent-skills](https://github.com/mongodb/agent-skills) |
-| redis-development | Bonnes pratiques Redis : structures, recherche vectorielle, cache | [redis/agent-skills](https://github.com/redis/agent-skills) |
-| apollo-skills | GraphQL avec Apollo : Client, Server, Federation, Router, Rover | [apollographql/skills](https://github.com/apollographql/skills) |
-| expo | Applications React Native avec Expo : UI, EAS, mises à jour, publication | [expo/skills](https://github.com/expo/skills) |
-| huggingface-skills | Modèles, datasets et Spaces Hugging Face : recherche, entraînement, déploiement | [huggingface/skills](https://github.com/huggingface/skills) |
-| dominodatalab | Plateforme Domino Data Lab : jobs, modèles, expériences, déploiements | [dominodatalab/domino-claude-plugin](https://github.com/dominodatalab/domino-claude-plugin) |
-
-### APIs, paiement, email et analytics
-| Plugin | Rôle | Source |
-|---|---|---|
-| stripe | Intégration Stripe : paiements, abonnements, bonnes pratiques | [stripe/ai](https://github.com/stripe/ai/tree/main/providers/claude/plugin) |
-| resend | Envoi et réception d'emails avec Resend, React Email | [resend/resend-skills](https://github.com/resend/resend-skills) |
-| postman | Collections, mocks, tests et monitoring d'API avec Postman | [postmanlabs/postman-plugin](https://github.com/postmanlabs/postman-plugin) |
-| product-tracking | Plan de tracking et instrumentation analytics pour produits SaaS | [accoil/product-tracking-skills](https://github.com/accoil/product-tracking-skills) |
-
-### Collaboration et gestion de projet
-| Plugin | Rôle | Source |
-|---|---|---|
-| github | MCP GitHub officiel : issues, PR, revue, recherche de code | [github/github-mcp-server](https://github.com/github/github-mcp-server) |
-| linear | Tickets et projets Linear | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/linear) |
-| notion | Pages et bases Notion : recherche, création, mise à jour | [makenotion/claude-code-notion-plugin](https://github.com/makenotion/claude-code-notion-plugin) |
-| slack | Messages, canaux et fils Slack | [slackapi/slack-mcp-plugin](https://github.com/slackapi/slack-mcp-plugin) |
-
 ## Plugins synchronisés depuis claude.ai (hors script)
 
-Ces plugins suivent mon compte claude.ai et se synchronisent tout seuls. Le script ne les gère pas.
+Ces plugins suivent mon compte claude.ai et se synchronisent tout seuls. Le script ne les gère pas. Les connecteurs tiers n'y figurent pas.
 
 | Plugin | Rôle | Source |
 |---|---|---|
 | engineering, design, data, productivity, product-management, cowork-plugin-management | Workflows métier Anthropic (knowledge work) | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
 | pdf-viewer | Lecture, annotation et signature de PDF | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
 | dev-mentor | Mentor qui guide par des questions plutôt que des réponses | [IrinaTerebiznik/claud-coach](https://github.com/IrinaTerebiznik/claud-coach) |
-| desktop-commander | Terminal, processus et fichiers via MCP | [wonderwhy-er/DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP) |
-| slack-by-salesforce | MCP Slack officiel | [slackapi/slack-mcp-plugin](https://github.com/slackapi/slack-mcp-plugin) |
-| dropbox | Fichiers Dropbox : recherche, rangement, partage | [dropbox.com](https://www.dropbox.com) |
-| figma | MCP Figma et skills associés | — |
-| prisma | MCP Prisma : Postgres, migrations, requêtes | — |
 
 ## Licence
 

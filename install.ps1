@@ -1,11 +1,19 @@
 # Install, reinstall or update the Claude Code plugins listed in plugins.txt (Windows PowerShell / pwsh).
 #
-#   .\install.ps1           add missing marketplaces, install missing plugins, update the rest
-#   .\install.ps1 -Export   rewrite plugins.txt from the plugins installed on this machine
+#   .\install.ps1                  all plugins: add missing marketplaces, install missing plugins, update the rest
+#   .\install.ps1 caveman serena   only the named plugins
+#   .\install.ps1 -Pick            choose from a numbered list
+#   .\install.ps1 -Export          add plugins installed on this machine but not yet listed in plugins.txt
 #
-# Remote one-liner:
+# Remote one-liner (installs everything):
 #   irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1 | iex
-param([switch]$Export)
+# Remote with selection:
+#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1))) -Pick
+param(
+    [switch]$Export,
+    [switch]$Pick,
+    [Parameter(ValueFromRemainingArguments)][string[]]$Names = @()
+)
 $ErrorActionPreference = 'Stop'
 
 $RawUrl   = 'https://raw.githubusercontent.com/gudoy/claude-plugins/main/plugins.txt'
@@ -26,51 +34,80 @@ function Get-LocalPlugins {
     (claude plugin list --json 2>$null | Out-String | ConvertFrom-Json) |
         Where-Object { $_.id -notlike '*@synced' } | ForEach-Object { $_.id }
 }
-
-if ($Export) {
-    $lines = @(
-        '# Claude Code plugins manifest, read by install.sh / install.ps1.'
-        '# Regenerate with: ./install.sh --export'
-        "# marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin'"
-        '# plugin <name@marketplace>'
-        ''
-    )
-    $mkts = Get-Marketplaces | ForEach-Object {
-        $src = if ($_.repo) { $_.repo } elseif ($_.url) { $_.url } else { 'builtin' }
-        "marketplace $($_.name) $src"
-    }
-    $lines += $mkts | Sort-Object -Unique
-    $lines += ''
-    $plugins = @(Get-LocalPlugins | Sort-Object)
-    $lines += $plugins | ForEach-Object { "plugin $_" }
-    $lines | Set-Content -Path $Manifest -Encoding utf8
-    Write-Host "Wrote $Manifest ($($plugins.Count) plugins)."
-    return
+function Get-ManifestIds([string]$Kind) {
+    Get-Content $Manifest | Where-Object { $_ -match "^$Kind\s" } | ForEach-Object { ($_ -split '\s+')[1] }
+}
+function Get-MarketplaceSource([string]$Name) {
+    Get-Content $Manifest | Where-Object { $_ -match "^marketplace\s+$([regex]::Escape($Name))\s" } |
+        ForEach-Object { ($_ -split '\s+')[2] } | Select-Object -First 1
 }
 
 if (-not (Test-Path $Manifest)) {
+    if ($Export) { throw '-Export needs a local clone of the repository.' }
     $Manifest = Join-Path ([IO.Path]::GetTempPath()) 'claude-plugins.txt'
     Invoke-WebRequest -UseBasicParsing $RawUrl -OutFile $Manifest
 }
 
+if ($Export) {
+    $known = @(Get-ManifestIds 'plugin') + @(Get-ManifestIds 'exclude')
+    $mkts  = @(Get-Marketplaces)
+    $new   = @(Get-LocalPlugins | Where-Object { $known -notcontains $_ })
+    foreach ($id in $new) {
+        $mkt = $id.Split('@')[1]
+        if (-not (Get-MarketplaceSource $mkt)) {
+            $m = $mkts | Where-Object { $_.name -eq $mkt } | Select-Object -First 1
+            $src = if ($m.repo) { $m.repo } elseif ($m.url) { $m.url } else { 'builtin' }
+            Add-Content -Path $Manifest -Value "marketplace $mkt $src"
+        }
+        Add-Content -Path $Manifest -Value "plugin $id"
+        Write-Host "+ $id"
+    }
+    Write-Host "Added $($new.Count) plugin(s) to $Manifest. Change 'plugin' to 'exclude' for any you do not want to share."
+    return
+}
+
+$all = @(Get-ManifestIds 'plugin')
+if ($Pick) {
+    for ($i = 0; $i -lt $all.Count; $i++) { Write-Host ('{0,3}) {1}' -f ($i + 1), $all[$i]) }
+    $answer = Read-Host 'Numbers or ranges (e.g. "1 4 7-9"), or "all"'
+    if ($answer.Trim() -eq 'all') { $selected = $all } else {
+        $selected = foreach ($tok in ($answer -split '\s+' | Where-Object { $_ })) {
+            if ($tok -match '^(\d+)-(\d+)$') { [int]$Matches[1]..[int]$Matches[2] | Where-Object { $_ -ge 1 -and $_ -le $all.Count } | ForEach-Object { $all[$_ - 1] } }
+            elseif ($tok -match '^\d+$' -and [int]$tok -ge 1 -and [int]$tok -le $all.Count) { $all[[int]$tok - 1] }
+            else { Write-Host "Ignored: $tok" }
+        }
+        $selected = @($selected | Select-Object -Unique)
+    }
+} elseif ($Names.Count) {
+    $selected = foreach ($n in $Names) {
+        $match = $all | Where-Object { $_ -eq $n -or $_ -like "$n@*" }
+        if ($match) { $match } else { Write-Host "Not in plugins.txt: $n" }
+    }
+} else {
+    $selected = $all
+}
+$selected = @($selected)
+if (-not $selected.Count) { Write-Host 'Nothing selected.'; exit 1 }
+
 $haveMkt = @(Get-Marketplaces | ForEach-Object { $_.name })
 $havePlg = @(Get-LocalPlugins)
 $failed  = @()
-$entries = Get-Content $Manifest | Where-Object { $_ -match '^(marketplace|plugin) ' } | ForEach-Object { , ($_ -split '\s+') }
 
-foreach ($e in $entries | Where-Object { $_[0] -eq 'marketplace' -and $_[2] -ne 'builtin' }) {
-    $name, $src = $e[1], $e[2]
-    if ($haveMkt -contains $name) {
-        Write-Host "↻ marketplace $name"
-        claude plugin marketplace update $name *> $null; if ($LASTEXITCODE) { $failed += "marketplace update $name" }
-    } else {
-        Write-Host "+ marketplace $name ($src)"
+foreach ($mkt in ($selected | ForEach-Object { $_.Split('@')[1] } | Sort-Object -Unique)) {
+    $src = Get-MarketplaceSource $mkt
+    if ($src -eq 'builtin') { continue }
+    if ($haveMkt -contains $mkt) {
+        Write-Host "↻ marketplace $mkt"
+        claude plugin marketplace update $mkt *> $null; if ($LASTEXITCODE) { $failed += "marketplace update $mkt" }
+    } elseif ($src) {
+        Write-Host "+ marketplace $mkt ($src)"
         claude plugin marketplace add $src *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
+    } else {
+        $failed += "no 'marketplace $mkt' line in plugins.txt"
     }
 }
 
-foreach ($e in $entries | Where-Object { $_[0] -eq 'plugin' }) {
-    $id = $e[1]
+foreach ($id in $selected) {
     if ($havePlg -contains $id) {
         Write-Host "↻ $id"
         claude plugin update $id *> $null; if ($LASTEXITCODE) { $failed += "update $id" }
