@@ -49,6 +49,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 ### After installing
 
 - **headroom** needs its CLI: `uv tool install --python 3.13 "headroom-ai[all]"` (or `pip install "headroom-ai[all]"`).
+- **task-observer** only triggers reliably once its activation block is in your `CLAUDE.md` (see its [environments guide](https://github.com/rebelytics/one-skill-to-rule-them-all/blob/main/references/environments.md)).
 - **LSP plugins** need the matching language server on your `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
 - The script clones over HTTPS, so you don't need an SSH key.
 
@@ -78,6 +79,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
 | claude-code-setup | Analyzes a project and recommends fitting hooks, skills, MCP servers and subagents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) |
 | skill-creator | Creates, improves and evaluates skills | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) |
+| task-observer | Meta-skill that watches sessions and turns recurring corrections into proposed skill improvements, with a human review gate | [rebelytics/one-skill-to-rule-them-all](https://github.com/rebelytics/one-skill-to-rule-them-all) |
 
 ### Design and frontend
 | Plugin | What it does | Source |

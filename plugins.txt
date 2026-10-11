@@ -14,6 +14,7 @@ marketplace ecc https://github.com/affaan-m/ECC.git
 marketplace headroom-marketplace headroomlabs-ai/headroom
 marketplace i-have-adhd ayghri/i-have-adhd
 marketplace karpathy-skills forrestchang/andrej-karpathy-skills
+marketplace one-skill-to-rule-them-all rebelytics/one-skill-to-rule-them-all
 marketplace superpowers-marketplace obra/superpowers-marketplace
 marketplace taste-skill Leonxlnx/taste-skill
 marketplace ui-ux-pro-max-skill nextlevelbuilder/ui-ux-pro-max-skill
@@ -50,6 +51,7 @@ plugin security-guidance@anthropic-plugin-directory
 plugin skill-creator@claude-plugins-official
 plugin superpowers@superpowers-marketplace
 plugin swift-lsp@claude-plugins-official
+plugin task-observer@one-skill-to-rule-them-all
 plugin taste-skill@taste-skill
 plugin typescript-lsp@claude-plugins-official
 plugin ui-ux-pro-max@ui-ux-pro-max-skill
