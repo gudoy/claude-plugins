@@ -1,8 +1,8 @@
 # claude-plugins
 
-Mes plugins de *harnais* [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) — méthode, comportement, revue, design, LSP, sécurité — regroupés par usage, plus un script pour les installer, les réinstaller ou les mettre à jour sur n'importe quelle machine (macOS, Linux, WSL, Windows).
+My [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) *harness* plugins (workflow, behavior, review, design, LSP, security), grouped by use, plus a script to install, reinstall or update them on any machine (macOS, Linux, WSL, Windows).
 
-## Installation rapide
+## Quick install
 
 **macOS / Linux / WSL / Git Bash**
 ```bash
@@ -14,16 +14,16 @@ curl -fsSL https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.s
 irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1 | iex
 ```
 
-Ou en local, après un `git clone` :
+Or locally, after a `git clone`:
 ```bash
-./install.sh                  # tous les plugins : installe ceux qui manquent, met à jour les autres
-./install.sh caveman serena   # seulement les plugins nommés
-./install.sh --pick           # liste numérotée, réponds par ex. "1 4 7-9" ou "all"
-./install.sh --export         # ajoute à plugins.txt les plugins installés ici mais pas encore listés
+./install.sh                  # all plugins: install the missing ones, update the rest
+./install.sh caveman serena   # only the named plugins
+./install.sh --pick           # numbered list, answer e.g. "1 4 7-9" or "all"
+./install.sh --export         # add to plugins.txt the plugins installed here but not listed yet
 ```
-Windows : `.\install.ps1`, `.\install.ps1 caveman serena`, `.\install.ps1 -Pick`, `.\install.ps1 -Export`.
+Windows: `.\install.ps1`, `.\install.ps1 caveman serena`, `.\install.ps1 -Pick`, `.\install.ps1 -Export`.
 
-Choisir depuis la commande à distance :
+To choose plugins from the remote command:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.sh | bash -s -- --pick
 ```
@@ -31,102 +31,102 @@ curl -fsSL https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.s
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1))) -Pick
 ```
 
-Le script peut être relancé sans risque : ce qui est déjà installé est seulement mis à jour. Redémarre ensuite Claude Code (ou lance `/reload-plugins`).
+The script is safe to run again: plugins that are already installed are only updated. Then restart Claude Code (or run `/reload-plugins`).
 
-### Synchroniser plusieurs machines
+### Sync several machines
 
-1. Sur la machine de référence : `./install.sh --export`, vérifie les ajouts, puis commit et push de `plugins.txt`.
-2. Sur les autres machines : `git pull && ./install.sh`.
+1. On the reference machine: run `./install.sh --export`, review what it added, then commit and push `plugins.txt`.
+2. On the other machines: `git pull && ./install.sh`.
 
-`plugins.txt` est la seule source de vérité. Format :
+`plugins.txt` is the single source of truth. Format:
 ```
-marketplace <nom> <source>     # source = owner/repo GitHub, URL git, ou builtin
-plugin <nom>@<marketplace>     # installé et mis à jour par le script
-exclude <nom>@<marketplace>    # installé sur ma machine mais hors du dépôt ; --export ne le rajoute jamais
+marketplace <name> <source>     # source = GitHub owner/repo, git URL, or builtin
+plugin <name>@<marketplace>     # installed and updated by the script
+exclude <name>@<marketplace>    # installed on my machine but kept out of this repo; --export never adds it back
 ```
-Les connecteurs vers des services tiers (Stripe, Supabase, GitHub, Notion…) sont en `exclude` : ce dépôt ne garde que le harnais.
+Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked `exclude`: this repo keeps only the harness.
 
-### Après installation
+### After installing
 
-- **Plugins LSP** : ils ont besoin du serveur de langage correspondant dans le `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
-- Le script clone en HTTPS : une clé SSH n'est pas nécessaire.
+- **LSP plugins** need the matching language server on your `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
+- The script clones over HTTPS, so you don't need an SSH key.
 
 ## Plugins
 
-### Méthode et workflow de développement
-| Plugin | Rôle | Source |
+### Development workflow and method
+| Plugin | What it does | Source |
 |---|---|---|
-| superpowers | Bibliothèque de skills de process : brainstorming, plans, TDD, débogage systématique | [obra/superpowers](https://github.com/obra/superpowers) |
-| ecc | Couche d'outillage très large : agents, skills, hooks et commandes pour tout le cycle de dev | [affaan-m/ECC](https://github.com/affaan-m/ECC) |
-| agent-skills | Skills d'ingénierie couvrant spec, plan, build, vérification et revue | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
-| mattpocock-skills | Skills de Matt Pocock : grilling, specs, TDD, revue de code, modélisation de domaine | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| andrej-karpathy-skills | Règles de conduite pour éviter les erreurs de code classiques des LLM | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) |
-| feature-dev | Workflow guidé de développement de feature avec agents d'exploration et d'architecture | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/feature-dev) |
-| code-review | Revue automatique de PR par plusieurs agents spécialisés | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-review) |
-| pr-review-toolkit | Agents de revue ciblés : tests, gestion d'erreurs, types, commentaires | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit) |
-| code-simplifier | Agent qui simplifie le code récemment modifié sans changer son comportement | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) |
-| commit-commands | Commandes pour commit, push et création de PR | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/commit-commands) |
+| superpowers | Process skills library: brainstorming, plans, TDD, systematic debugging | [obra/superpowers](https://github.com/obra/superpowers) |
+| ecc | Very broad toolkit: agents, skills, hooks and commands for the whole dev cycle | [affaan-m/ECC](https://github.com/affaan-m/ECC) |
+| agent-skills | Engineering skills covering spec, plan, build, verify and review | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
+| mattpocock-skills | Matt Pocock's skills: grilling, specs, TDD, code review, domain modeling | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| andrej-karpathy-skills | Guidelines that prevent common LLM coding mistakes | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) |
+| feature-dev | Guided feature development with exploration and architecture agents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/feature-dev) |
+| code-review | Automated PR review by several specialized agents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-review) |
+| pr-review-toolkit | Focused review agents: tests, error handling, types, comments | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit) |
+| code-simplifier | Agent that simplifies recently changed code without changing behavior | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) |
+| commit-commands | Commands to commit, push and open a PR | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/commit-commands) |
 
-### Comportement de Claude, mémoire et configuration
-| Plugin | Rôle | Source |
+### Claude's behavior, memory and configuration
+| Plugin | What it does | Source |
 |---|---|---|
-| caveman | Réponses ultra-compressées : environ 75 % de tokens en moins, précision technique intacte | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
-| i-have-adhd | Réponses orientées action, adaptées aux lecteurs TDAH | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
-| remember | Mémoire continue : résume les sessions en journaux quotidiens compressés | [Digital-Process-Tools/claude-remember](https://github.com/Digital-Process-Tools/claude-remember) |
-| claude-md-management | Audit et amélioration des fichiers CLAUDE.md | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
-| claude-code-setup | Analyse un projet et recommande hooks, skills, MCP et sous-agents adaptés | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) |
-| skill-creator | Création, amélioration et évaluation de skills | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) |
+| caveman | Ultra-compressed replies: about 75% fewer tokens, same technical accuracy | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
+| i-have-adhd | Action-first replies, shaped for ADHD readers | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
+| remember | Continuous memory: summarizes sessions into compressed daily logs | [Digital-Process-Tools/claude-remember](https://github.com/Digital-Process-Tools/claude-remember) |
+| claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
+| claude-code-setup | Analyzes a project and recommends fitting hooks, skills, MCP servers and subagents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) |
+| skill-creator | Creates, improves and evaluates skills | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) |
 
-### Design et frontend
-| Plugin | Rôle | Source |
+### Design and frontend
+| Plugin | What it does | Source |
 |---|---|---|
-| frontend-design | Interfaces frontend soignées, loin des rendus génériques | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design) |
-| ui-ux-pro-max | Base de connaissances UI/UX : styles, palettes, typographies, patterns | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
-| taste-skill | Directions esthétiques frontend : brutaliste, minimaliste, soft, refonte… | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) |
+| frontend-design | Polished frontend interfaces that avoid generic-looking output | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design) |
+| ui-ux-pro-max | UI/UX knowledge base: styles, palettes, typography, patterns | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
+| taste-skill | Frontend aesthetic directions: brutalist, minimalist, soft, redesign… | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) |
 
 ### Documents
-| Plugin | Rôle | Source |
+| Plugin | What it does | Source |
 |---|---|---|
-| document-skills | Lecture et création de fichiers Word, Excel, PowerPoint et PDF | [anthropics/skills](https://github.com/anthropics/skills) |
-| example-skills | Skills d'exemple Anthropic : création de skills, MCP, design visuel, artefacts | [anthropics/skills](https://github.com/anthropics/skills) |
+| document-skills | Reads and creates Word, Excel, PowerPoint and PDF files | [anthropics/skills](https://github.com/anthropics/skills) |
+| example-skills | Anthropic example skills: skill creation, MCP, visual design, artifacts | [anthropics/skills](https://github.com/anthropics/skills) |
 
-### Analyse de code et langages (LSP)
-| Plugin | Rôle | Source |
+### Code intelligence and language servers (LSP)
+| Plugin | What it does | Source |
 |---|---|---|
-| serena | Serveur MCP d'analyse sémantique du code : symboles, références, refactoring | [oraios/serena](https://github.com/oraios/serena) |
-| typescript-lsp | Serveur de langage TypeScript / JavaScript | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/typescript-lsp) |
-| pyright-lsp | Serveur de langage Python (Pyright) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pyright-lsp) |
-| rust-analyzer-lsp | Serveur de langage Rust | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/rust-analyzer-lsp) |
-| swift-lsp | Serveur de langage Swift (SourceKit-LSP) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/swift-lsp) |
-| kotlin-lsp | Serveur de langage Kotlin | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/kotlin-lsp) |
-| clangd-lsp | Serveur de langage C / C++ (clangd) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/clangd-lsp) |
-| php-lsp | Serveur de langage PHP (Intelephense) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/php-lsp) |
-| ruby-lsp | Serveur de langage Ruby | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ruby-lsp) |
-| vue-volar | Serveur de langage Vue.js (Volar) | [Piebald-AI/claude-code-lsps](https://github.com/Piebald-AI/claude-code-lsps) |
+| serena | MCP server for semantic code analysis: symbols, references, refactoring | [oraios/serena](https://github.com/oraios/serena) |
+| typescript-lsp | TypeScript / JavaScript language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/typescript-lsp) |
+| pyright-lsp | Python language server (Pyright) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pyright-lsp) |
+| rust-analyzer-lsp | Rust language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/rust-analyzer-lsp) |
+| swift-lsp | Swift language server (SourceKit-LSP) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/swift-lsp) |
+| kotlin-lsp | Kotlin language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/kotlin-lsp) |
+| clangd-lsp | C / C++ language server (clangd) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/clangd-lsp) |
+| php-lsp | PHP language server (Intelephense) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/php-lsp) |
+| ruby-lsp | Ruby language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ruby-lsp) |
+| vue-volar | Vue.js language server (Volar) | [Piebald-AI/claude-code-lsps](https://github.com/Piebald-AI/claude-code-lsps) |
 
-### Sécurité
-| Plugin | Rôle | Source |
+### Security
+| Plugin | What it does | Source |
 |---|---|---|
-| claude-security | Scan de vulnérabilités du code, avec génération de patchs vérifiés | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) |
-| security-guidance | Alertes de sécurité pendant l'édition et revue du diff en fin de tour | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
+| claude-security | Scans code for vulnerabilities and generates verified patches | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) |
+| security-guidance | Security warnings while editing, plus a diff review at the end of each turn | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
 
-### Navigateur, tests et documentation
-| Plugin | Rôle | Source |
+### Browser, testing and documentation
+| Plugin | What it does | Source |
 |---|---|---|
-| playwright | Automatisation de navigateur et tests end-to-end (MCP Microsoft) | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) |
-| chrome-devtools-mcp | Contrôle et inspection d'un Chrome réel : réseau, performance, console | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
-| context7 | Documentation à jour des librairies et frameworks | [upstash/context7](https://github.com/upstash/context7) |
+| playwright | Browser automation and end-to-end testing (Microsoft MCP) | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) |
+| chrome-devtools-mcp | Controls and inspects a real Chrome: network, performance, console | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
+| context7 | Up-to-date documentation for libraries and frameworks | [upstash/context7](https://github.com/upstash/context7) |
 
-## Plugins synchronisés depuis claude.ai (hors script)
+## Plugins synced from claude.ai (not handled by the script)
 
-Ces plugins suivent mon compte claude.ai et se synchronisent tout seuls. Le script ne les gère pas. Les connecteurs tiers n'y figurent pas.
+These plugins follow my claude.ai account and sync on their own. The script does not manage them. Third-party connectors are not listed.
 
-| Plugin | Rôle | Source |
+| Plugin | What it does | Source |
 |---|---|---|
-| engineering, design, data, productivity, product-management, cowork-plugin-management | Workflows métier Anthropic (knowledge work) | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
-| pdf-viewer | Lecture, annotation et signature de PDF | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
-| dev-mentor | Mentor qui guide par des questions plutôt que des réponses | [IrinaTerebiznik/claud-coach](https://github.com/IrinaTerebiznik/claud-coach) |
+| engineering, design, data, productivity, product-management, cowork-plugin-management | Anthropic knowledge-work workflows | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
+| pdf-viewer | Reads, annotates and signs PDFs | [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) |
+| dev-mentor | Mentor that guides with questions instead of answers | [IrinaTerebiznik/claud-coach](https://github.com/IrinaTerebiznik/claud-coach) |
 
-## Licence
+## License
 
 [MIT](LICENSE)
