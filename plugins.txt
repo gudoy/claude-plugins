@@ -1,0 +1,75 @@
+# Claude Code plugins manifest, read by install.sh / install.ps1.
+# Regenerate with: ./install.sh --export
+# marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin'
+# plugin <name@marketplace>
+
+marketplace addy-agent-skills addyosmani/agent-skills
+marketplace anthropic-agent-skills anthropics/skills
+marketplace anthropic-plugin-directory builtin
+marketplace caveman JuliusBrussee/caveman
+marketplace claude-code-lsps Piebald-AI/claude-code-lsps
+marketplace claude-plugins-official anthropics/claude-plugins-official
+marketplace ecc https://github.com/affaan-m/ECC.git
+marketplace i-have-adhd ayghri/i-have-adhd
+marketplace karpathy-skills forrestchang/andrej-karpathy-skills
+marketplace neon neondatabase/agent-skills
+marketplace superpowers-marketplace obra/superpowers-marketplace
+marketplace taste-skill Leonxlnx/taste-skill
+marketplace ui-ux-pro-max-skill nextlevelbuilder/ui-ux-pro-max-skill
+
+plugin agent-skills@addy-agent-skills
+plugin andrej-karpathy-skills@karpathy-skills
+plugin apollo-skills@claude-plugins-official
+plugin aws-core@claude-plugins-official
+plugin caveman@caveman
+plugin chrome-devtools-mcp@claude-plugins-official
+plugin clangd-lsp@claude-plugins-official
+plugin claude-code-setup@claude-plugins-official
+plugin claude-md-management@claude-plugins-official
+plugin claude-security@claude-plugins-official
+plugin cloudflare@claude-plugins-official
+plugin code-review@claude-plugins-official
+plugin code-simplifier@claude-plugins-official
+plugin commit-commands@claude-plugins-official
+plugin context7@claude-plugins-official
+plugin document-skills@anthropic-agent-skills
+plugin dominodatalab@claude-plugins-official
+plugin ecc@ecc
+plugin example-skills@anthropic-agent-skills
+plugin expo@claude-plugins-official
+plugin feature-dev@claude-plugins-official
+plugin frontend-design@claude-plugins-official
+plugin github@claude-plugins-official
+plugin huggingface-skills@claude-plugins-official
+plugin i-have-adhd@i-have-adhd
+plugin kotlin-lsp@claude-plugins-official
+plugin linear@claude-plugins-official
+plugin mattpocock-skills@claude-plugins-official
+plugin mongodb@claude-plugins-official
+plugin neon-postgres@neon
+plugin notion@claude-plugins-official
+plugin php-lsp@claude-plugins-official
+plugin playwright@claude-plugins-official
+plugin postman@claude-plugins-official
+plugin pr-review-toolkit@claude-plugins-official
+plugin product-tracking@anthropic-plugin-directory
+plugin pyright-lsp@claude-plugins-official
+plugin redis-development@claude-plugins-official
+plugin remember@claude-plugins-official
+plugin resend@claude-plugins-official
+plugin ruby-lsp@claude-plugins-official
+plugin rust-analyzer-lsp@claude-plugins-official
+plugin security-guidance@anthropic-plugin-directory
+plugin sentry-cli@claude-plugins-official
+plugin sentry@claude-plugins-official
+plugin serena@anthropic-plugin-directory
+plugin skill-creator@claude-plugins-official
+plugin slack@claude-plugins-official
+plugin stripe@claude-plugins-official
+plugin supabase@claude-plugins-official
+plugin superpowers@superpowers-marketplace
+plugin swift-lsp@claude-plugins-official
+plugin taste-skill@taste-skill
+plugin typescript-lsp@claude-plugins-official
+plugin ui-ux-pro-max@ui-ux-pro-max-skill
+plugin vue-volar@claude-code-lsps
