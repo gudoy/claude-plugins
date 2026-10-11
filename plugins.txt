@@ -11,6 +11,7 @@ marketplace caveman JuliusBrussee/caveman
 marketplace claude-code-lsps Piebald-AI/claude-code-lsps
 marketplace claude-plugins-official anthropics/claude-plugins-official
 marketplace ecc https://github.com/affaan-m/ECC.git
+marketplace headroom-marketplace headroomlabs-ai/headroom
 marketplace i-have-adhd ayghri/i-have-adhd
 marketplace karpathy-skills forrestchang/andrej-karpathy-skills
 marketplace superpowers-marketplace obra/superpowers-marketplace
@@ -34,6 +35,7 @@ plugin ecc@ecc
 plugin example-skills@anthropic-agent-skills
 plugin feature-dev@claude-plugins-official
 plugin frontend-design@claude-plugins-official
+plugin headroom@headroom-marketplace
 plugin i-have-adhd@i-have-adhd
 plugin kotlin-lsp@claude-plugins-official
 plugin mattpocock-skills@claude-plugins-official

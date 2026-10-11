@@ -48,6 +48,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 
 ### After installing
 
+- **headroom** needs its CLI: `uv tool install --python 3.13 "headroom-ai[all]"` (or `pip install "headroom-ai[all]"`).
 - **LSP plugins** need the matching language server on your `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
 - The script clones over HTTPS, so you don't need an SSH key.
 
@@ -71,6 +72,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | Plugin | What it does | Source |
 |---|---|---|
 | caveman | Ultra-compressed replies: about 75% fewer tokens, same technical accuracy | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
+| headroom | Starts the Headroom runtime, which compresses tool outputs, logs and files before they reach the model (needs the `headroom` CLI) | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) |
 | i-have-adhd | Action-first replies, shaped for ADHD readers | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
 | remember | Continuous memory: summarizes sessions into compressed daily logs | [Digital-Process-Tools/claude-remember](https://github.com/Digital-Process-Tools/claude-remember) |
 | claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
