@@ -73,6 +73,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | caveman | Ultra-compressed replies: about 75% fewer tokens, same technical accuracy | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
 | i-have-adhd | Action-first replies, shaped for ADHD readers | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
 | remember | Continuous memory: summarizes sessions into compressed daily logs | [Digital-Process-Tools/claude-remember](https://github.com/Digital-Process-Tools/claude-remember) |
+| claude-mem | Persistent memory: captures sessions, compresses them with AI and injects relevant context into later sessions (needs Bun) | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) |
 | claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
 | claude-code-setup | Analyzes a project and recommends fitting hooks, skills, MCP servers and subagents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) |
 | skill-creator | Creates, improves and evaluates skills | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) |

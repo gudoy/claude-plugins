@@ -15,6 +15,7 @@ marketplace i-have-adhd ayghri/i-have-adhd
 marketplace karpathy-skills forrestchang/andrej-karpathy-skills
 marketplace superpowers-marketplace obra/superpowers-marketplace
 marketplace taste-skill Leonxlnx/taste-skill
+marketplace thedotmack thedotmack/claude-mem
 marketplace ui-ux-pro-max-skill nextlevelbuilder/ui-ux-pro-max-skill
 
 plugin agent-skills@addy-agent-skills
@@ -24,6 +25,7 @@ plugin chrome-devtools-mcp@claude-plugins-official
 plugin clangd-lsp@claude-plugins-official
 plugin claude-code-setup@claude-plugins-official
 plugin claude-md-management@claude-plugins-official
+plugin claude-mem@thedotmack
 plugin claude-security@claude-plugins-official
 plugin code-review@claude-plugins-official
 plugin code-simplifier@claude-plugins-official
