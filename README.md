@@ -17,11 +17,11 @@ irm https://raw.githubusercontent.com/gudoy/claude-plugins/main/install.ps1 | ie
 Or locally, after a `git clone`:
 ```bash
 ./install.sh                  # all plugins: install the missing ones, update the rest
-./install.sh caveman serena   # only the named plugins
+./install.sh caveman headroom   # only the named plugins
 ./install.sh --pick           # numbered list, answer e.g. "1 4 7-9" or "all"
 ./install.sh --export         # add to plugins.txt the plugins installed here but not listed yet
 ```
-Windows: `.\install.ps1`, `.\install.ps1 caveman serena`, `.\install.ps1 -Pick`, `.\install.ps1 -Export`.
+Windows: `.\install.ps1`, `.\install.ps1 caveman headroom`, `.\install.ps1 -Pick`, `.\install.ps1 -Export`.
 
 To choose plugins from the remote command:
 ```bash
@@ -72,7 +72,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | Plugin | What it does | Source |
 |---|---|---|
 | caveman | Ultra-compressed replies: about 75% fewer tokens, same technical accuracy | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
-| headroom | Starts the Headroom runtime, which compresses tool outputs, logs and files before they reach the model (needs the `headroom` CLI) | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) |
+| headroom | Starts the Headroom runtime, which compresses tool outputs, logs and files before they reach the model (needs the `headroom` CLI; `headroom wrap claude` also sets up [Serena](https://github.com/oraios/serena) for semantic code navigation) | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) |
 | i-have-adhd | Action-first replies, shaped for ADHD readers | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
 | remember | Continuous memory: summarizes sessions into compressed daily logs | [Digital-Process-Tools/claude-remember](https://github.com/Digital-Process-Tools/claude-remember) |
 | claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
@@ -95,7 +95,6 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 ### Code intelligence and language servers (LSP)
 | Plugin | What it does | Source |
 |---|---|---|
-| serena | MCP server for semantic code analysis: symbols, references, refactoring | [oraios/serena](https://github.com/oraios/serena) |
 | typescript-lsp | TypeScript / JavaScript language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/typescript-lsp) |
 | pyright-lsp | Python language server (Pyright) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pyright-lsp) |
 | rust-analyzer-lsp | Rust language server | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/rust-analyzer-lsp) |

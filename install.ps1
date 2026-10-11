@@ -1,7 +1,7 @@
 # Install, reinstall or update the Claude Code plugins listed in plugins.txt (Windows PowerShell / pwsh).
 #
 #   .\install.ps1                  all plugins: add missing marketplaces, install missing plugins, update the rest
-#   .\install.ps1 caveman serena   only the named plugins
+#   .\install.ps1 caveman headroom   only the named plugins
 #   .\install.ps1 -Pick            choose from a numbered list
 #   .\install.ps1 -Export          add plugins installed on this machine but not yet listed in plugins.txt
 #

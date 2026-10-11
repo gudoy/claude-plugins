@@ -47,7 +47,6 @@ plugin remember@claude-plugins-official
 plugin ruby-lsp@claude-plugins-official
 plugin rust-analyzer-lsp@claude-plugins-official
 plugin security-guidance@anthropic-plugin-directory
-plugin serena@anthropic-plugin-directory
 plugin skill-creator@claude-plugins-official
 plugin superpowers@superpowers-marketplace
 plugin swift-lsp@claude-plugins-official

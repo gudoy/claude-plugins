@@ -3,7 +3,7 @@
 # macOS, Linux, WSL and Git Bash. Windows PowerShell: use install.ps1.
 #
 #   ./install.sh                  all plugins: add missing marketplaces, install missing plugins, update the rest
-#   ./install.sh caveman serena   only the named plugins
+#   ./install.sh caveman headroom   only the named plugins
 #   ./install.sh --pick           choose from a numbered list
 #   ./install.sh --export         add plugins installed on this machine but not yet listed in plugins.txt
 #
