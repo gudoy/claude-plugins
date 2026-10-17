@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install, reinstall or update the Claude Code plugins listed in plugins.txt.
+# Install, reinstall or update the Claude Code plugins and skills listed in plugins.txt.
 # macOS, Linux, WSL and Git Bash. Windows PowerShell: use install.ps1.
 #
 #   ./install.sh                  all plugins: add missing marketplaces, install missing plugins, update the rest
@@ -38,6 +38,7 @@ installed_marketplaces() {
 
 manifest_ids() { awk -v k="$1" '$1 == k { print $2 }' "$MANIFEST"; }
 marketplace_source() { awk -v n="$1" '$1 == "marketplace" && $2 == n { print $3 }' "$MANIFEST"; }
+skill_source() { awk -v n="$1" '$1 == "skill" && $2 == n { print $3 }' "$MANIFEST"; }
 
 export_new() {
   local known new mkts added=0 id mkt
@@ -56,9 +57,9 @@ export_new() {
   echo "Added $added plugin(s) to $MANIFEST. Change 'plugin' to 'exclude' for any you do not want to share."
 }
 
-# Prints the selected plugin ids, one per line.
+# Prints the selected plugin ids and skill names, one per line.
 select_plugins() {
-  local all; all="$(manifest_ids plugin)"
+  local all; all="$(manifest_ids plugin; manifest_ids skill)"
   if [[ "$MODE" == pick ]]; then
     local i=0 id; local -a ids=()
     for id in $all; do ids+=("$id"); i=$((i + 1)); printf '%3d) %s\n' "$i" "$id" >&2; done
@@ -86,9 +87,12 @@ select_plugins() {
 }
 
 sync_plugins() {
-  local selected have_mkt have_plg mkt src id failed=()
+  local selected skills have_mkt have_plg mkt src id name failed=()
   selected="$(select_plugins)"
   [[ -n "$selected" ]] || { echo "Nothing selected."; exit 1; }
+  # Plugin ids contain "@"; skill names do not.
+  skills="$(grep -v '@' <<<"$selected" || true)"
+  selected="$(grep '@' <<<"$selected" || true)"
   have_mkt="$(installed_marketplaces | cut -d' ' -f1)"
   have_plg="$(installed_plugins)"
 
@@ -114,6 +118,14 @@ sync_plugins() {
       echo "+ $id"
       claude plugin install "$id" >/dev/null 2>&1 || failed+=("install $id")
     fi
+  done
+
+  # Standalone skills (no plugin marketplace) go through the Skills CLI; "add" also updates.
+  for name in $skills; do
+    src="$(skill_source "$name")"
+    echo "+ skill $name ($src)"
+    (cd "$HOME" && npx -y skills add "$src" --skill "$name" --global --agent claude-code --yes) >/dev/null 2>&1 \
+      || failed+=("skill $name (needs Node.js/npx)")
   done
 
   echo

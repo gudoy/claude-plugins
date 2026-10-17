@@ -1,4 +1,4 @@
-# Install, reinstall or update the Claude Code plugins listed in plugins.txt (Windows PowerShell / pwsh).
+# Install, reinstall or update the Claude Code plugins and skills listed in plugins.txt (Windows PowerShell / pwsh).
 #
 #   .\install.ps1                  all plugins: add missing marketplaces, install missing plugins, update the rest
 #   .\install.ps1 caveman headroom   only the named plugins
@@ -41,6 +41,10 @@ function Get-MarketplaceSource([string]$Name) {
     Get-Content $Manifest | Where-Object { $_ -match "^marketplace\s+$([regex]::Escape($Name))\s" } |
         ForEach-Object { ($_ -split '\s+')[2] } | Select-Object -First 1
 }
+function Get-SkillSource([string]$Name) {
+    Get-Content $Manifest | Where-Object { $_ -match "^skill\s+$([regex]::Escape($Name))\s" } |
+        ForEach-Object { ($_ -split '\s+')[2] } | Select-Object -First 1
+}
 
 if (-not (Test-Path $Manifest)) {
     if ($Export) { throw '-Export needs a local clone of the repository.' }
@@ -66,7 +70,7 @@ if ($Export) {
     return
 }
 
-$all = @(Get-ManifestIds 'plugin')
+$all = @(Get-ManifestIds 'plugin') + @(Get-ManifestIds 'skill')
 if ($Pick) {
     for ($i = 0; $i -lt $all.Count; $i++) { Write-Host ('{0,3}) {1}' -f ($i + 1), $all[$i]) }
     $answer = Read-Host 'Numbers or ranges (e.g. "1 4 7-9"), or "all"'
@@ -88,6 +92,9 @@ if ($Pick) {
 }
 $selected = @($selected)
 if (-not $selected.Count) { Write-Host 'Nothing selected.'; exit 1 }
+# Plugin ids contain "@"; skill names do not.
+$skills   = @($selected | Where-Object { $_ -notlike '*@*' })
+$selected = @($selected | Where-Object { $_ -like '*@*' })
 
 $haveMkt = @(Get-Marketplaces | ForEach-Object { $_.name })
 $havePlg = @(Get-LocalPlugins)
@@ -115,6 +122,17 @@ foreach ($id in $selected) {
         Write-Host "+ $id"
         claude plugin install $id *> $null; if ($LASTEXITCODE) { $failed += "install $id" }
     }
+}
+
+# Standalone skills (no plugin marketplace) go through the Skills CLI; "add" also updates.
+foreach ($name in $skills) {
+    $src = Get-SkillSource $name
+    Write-Host "+ skill $name ($src)"
+    if (-not (Get-Command npx -ErrorAction SilentlyContinue)) { $failed += "skill $name (needs Node.js/npx)"; continue }
+    Push-Location $HOME
+    npx -y skills add $src --skill $name --global --agent claude-code --yes *> $null
+    if ($LASTEXITCODE) { $failed += "skill $name" }
+    Pop-Location
 }
 
 Write-Host ''

@@ -42,6 +42,7 @@ The script is safe to run again: plugins that are already installed are only upd
 ```
 marketplace <name> <source>     # source = GitHub owner/repo, git URL, or builtin
 plugin <name>@<marketplace>     # installed and updated by the script
+skill <name> <source>           # standalone skill, installed globally with the Skills CLI (needs Node.js)
 exclude <name>@<marketplace>    # installed on my machine but kept out of this repo; --export never adds it back
 ```
 Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked `exclude`: this repo keeps only the harness.
@@ -110,6 +111,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 |---|---|---|
 | claude-security | Scans code for vulnerabilities and generates verified patches | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) |
 | security-guidance | Security warnings while editing, plus a diff review at the end of each turn | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
+| security-audit (skill) | Full codebase security audit: recon, coverage-led hunting, adversarial validation, structured report | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) |
 
 ### Browser, testing and documentation
 | Plugin | What it does | Source |

@@ -1,6 +1,7 @@
 # Claude Code plugins manifest, read by install.sh / install.ps1.
 # marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin'
 # plugin <name@marketplace>     installed and updated by the scripts
+# skill <name> <source>        standalone skill (no plugin), installed globally with the Skills CLI (npx skills)
 # exclude <name@marketplace>    installed on my machine but kept out of this repo (third-party service connectors);
 #                               --export never adds these back
 
@@ -54,6 +55,8 @@ plugin taste-skill@taste-skill
 plugin typescript-lsp@claude-plugins-official
 plugin ui-ux-pro-max@ui-ux-pro-max-skill
 plugin vue-volar@claude-code-lsps
+
+skill security-audit cloudflare/security-audit-skill
 
 # Third-party service connectors
 exclude apollo-skills@claude-plugins-official
