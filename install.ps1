@@ -108,7 +108,7 @@ foreach ($mkt in ($selected | ForEach-Object { $_.Split('@')[1] } | Sort-Object 
         claude plugin marketplace update $mkt *> $null; if ($LASTEXITCODE) { $failed += "marketplace update $mkt" }
     } elseif ($src) {
         Write-Host "+ marketplace $mkt ($src)"
-        claude plugin marketplace add $src *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
+        claude plugin marketplace add ($src -replace '^~', $HOME) *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
     } else {
         $failed += "no 'marketplace $mkt' line in plugins.txt"
     }
@@ -128,6 +128,13 @@ foreach ($id in $selected) {
 foreach ($name in $skills) {
     $src = Get-SkillSource $name
     Write-Host "+ skill $name ($src)"
+    if ($src -like 'pypi:*') {
+        if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { $failed += "skill $name (needs uv)"; continue }
+        uv tool install --upgrade $src.Substring(5) *> $null
+        if (-not $LASTEXITCODE) { & $name install *> $null }
+        if ($LASTEXITCODE) { $failed += "skill $name" }
+        continue
+    }
     if (-not (Get-Command npx -ErrorAction SilentlyContinue)) { $failed += "skill $name (needs Node.js/npx)"; continue }
     Push-Location $HOME
     npx -y skills add $src --skill $name --global --agent claude-code --yes *> $null
