@@ -1,7 +1,8 @@
 # Claude Code plugins manifest, read by install.sh / install.ps1.
-# marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin'
+# marketplace <name> <source>   source = GitHub owner/repo, git URL, local path (~ allowed), or 'builtin'
 # plugin <name@marketplace>     installed and updated by the scripts
-# skill <name> <source>        standalone skill (no plugin), installed globally with the Skills CLI (npx skills)
+# skill <name> <source>        standalone skill (no plugin), installed globally with the Skills CLI (npx skills);
+#                               source 'pypi:<package>' installs the package with uv, then runs '<name> install'
 # exclude <name@marketplace>    installed on my machine but kept out of this repo (third-party service connectors);
 #                               --export never adds these back
 
@@ -15,7 +16,8 @@ marketplace ecc https://github.com/affaan-m/ECC.git
 marketplace headroom-marketplace headroomlabs-ai/headroom
 marketplace i-have-adhd ayghri/i-have-adhd
 marketplace karpathy-skills forrestchang/andrej-karpathy-skills
-marketplace superpowers-marketplace obra/superpowers-marketplace
+marketplace local-mods ~/Projects/claude-mods/collapse-tool-calls
+marketplace nyldn-plugins https://github.com/nyldn/claude-octopus.git
 marketplace taste-skill Leonxlnx/taste-skill
 marketplace ui-ux-pro-max-skill nextlevelbuilder/ui-ux-pro-max-skill
 
@@ -29,8 +31,10 @@ plugin claude-md-management@claude-plugins-official
 plugin claude-security@claude-plugins-official
 plugin code-review@claude-plugins-official
 plugin code-simplifier@claude-plugins-official
+plugin collapse-tool-calls@local-mods
 plugin commit-commands@claude-plugins-official
 plugin context7@claude-plugins-official
+plugin desktop-commander@claude-plugins-official
 plugin document-skills@anthropic-agent-skills
 plugin ecc@ecc
 plugin example-skills@anthropic-agent-skills
@@ -39,24 +43,32 @@ plugin frontend-design@claude-plugins-official
 plugin headroom@headroom-marketplace
 plugin i-have-adhd@i-have-adhd
 plugin kotlin-lsp@claude-plugins-official
+plugin learning-output-style@claude-plugins-official
 plugin mattpocock-skills@claude-plugins-official
+plugin octo@nyldn-plugins
 plugin php-lsp@claude-plugins-official
+plugin playground@claude-plugins-official
 plugin playwright@claude-plugins-official
 plugin pr-review-toolkit@claude-plugins-official
 plugin pyright-lsp@claude-plugins-official
 plugin remember@claude-plugins-official
 plugin ruby-lsp@claude-plugins-official
 plugin rust-analyzer-lsp@claude-plugins-official
-plugin security-guidance@anthropic-plugin-directory
+plugin security-guidance@claude-plugins-official
+plugin session-report@claude-plugins-official
 plugin skill-creator@claude-plugins-official
-plugin superpowers@superpowers-marketplace
+plugin superpowers@claude-plugins-official
 plugin swift-lsp@claude-plugins-official
 plugin taste-skill@taste-skill
 plugin typescript-lsp@claude-plugins-official
 plugin ui-ux-pro-max@ui-ux-pro-max-skill
 plugin vue-volar@claude-code-lsps
 
+skill computer-use stablyai/orca
+skill find-skills vercel-labs/skills
+skill graphify pypi:graphifyy
 skill security-audit cloudflare/security-audit-skill
+skill web-design-guidelines vercel-labs/agent-skills
 
 # Third-party service connectors
 exclude apollo-skills@claude-plugins-official

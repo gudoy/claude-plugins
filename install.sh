@@ -104,7 +104,7 @@ sync_plugins() {
       claude plugin marketplace update "$mkt" >/dev/null 2>&1 || failed+=("marketplace update $mkt")
     elif [[ -n "$src" ]]; then
       echo "+ marketplace $mkt ($src)"
-      claude plugin marketplace add "$src" >/dev/null 2>&1 || failed+=("marketplace add $src")
+      claude plugin marketplace add "${src/#\~/$HOME}" >/dev/null 2>&1 || failed+=("marketplace add $src")
     else
       failed+=("no 'marketplace $mkt' line in plugins.txt")
     fi
@@ -124,6 +124,11 @@ sync_plugins() {
   for name in $skills; do
     src="$(skill_source "$name")"
     echo "+ skill $name ($src)"
+    if [[ "$src" == pypi:* ]]; then
+      { uv tool install --upgrade "${src#pypi:}" && "$name" install; } >/dev/null 2>&1 \
+        || failed+=("skill $name (needs uv)")
+      continue
+    fi
     (cd "$HOME" && npx -y skills add "$src" --skill "$name" --global --agent claude-code --yes) >/dev/null 2>&1 \
       || failed+=("skill $name (needs Node.js/npx)")
   done
