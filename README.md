@@ -40,15 +40,17 @@ The script is safe to run again: plugins that are already installed are only upd
 
 `plugins.txt` is the single source of truth. Format:
 ```
-marketplace <name> <source> [flags]   # source = GitHub owner/repo, git URL, or builtin; flags go to `claude plugin marketplace add` (e.g. --sparse)
+marketplace <name> <source> [flags]   # source = GitHub owner/repo, git URL, local path (~ allowed), or builtin; flags go to `claude plugin marketplace add` (e.g. --sparse)
 plugin <name>@<marketplace>     # installed and updated by the script
-skill <name> <source>           # standalone skill, installed globally with the Skills CLI (needs Node.js)
+skill <name> <source>           # standalone skill, installed globally with the Skills CLI (needs Node.js), or pypi:<package> with uv
 exclude <name>@<marketplace>    # installed on my machine but kept out of this repo; --export never adds it back
 ```
 Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked `exclude`: this repo keeps only the harness.
 
 ### After installing
 
+- **collapse-tool-calls** is read from `~/Projects/claude-mods/collapse-tool-calls`: on a machine without that folder its install fails and the script reports it.
+- **graphify** is installed with `uv tool install graphifyy`, then `graphify install` registers the skill.
 - **headroom** needs its CLI: `uv tool install --python 3.13 "headroom-ai[all]"` (or `pip install "headroom-ai[all]"`).
 - **harness** needs the Harness CLI: `curl -fsSL https://harness.autonomous.ai/cli/install.sh | bash`, then `harness login` (the installer also sets up `hn` and edits `~/.tmux.conf`).
 - **rea** needs Node.js (its MCP server comes from the `rea-agents` npm package). Decompiler backends (Ghidra, IDA, jadx…) are optional: see [rea's installation guide](https://github.com/morluto/rea/blob/main/docs/installation.md).
@@ -60,7 +62,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 ### Development workflow and method
 | Plugin | What it does | Source |
 |---|---|---|
-| superpowers | Process skills library: brainstorming, plans, TDD, systematic debugging | [obra/superpowers](https://github.com/obra/superpowers) |
+| superpowers | Process skills library: brainstorming, plans, TDD, systematic debugging | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/superpowers) |
 | ecc | Very broad toolkit: agents, skills, hooks and commands for the whole dev cycle | [affaan-m/ECC](https://github.com/affaan-m/ECC) |
 | agent-skills | Engineering skills covering spec, plan, build, verify and review | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | mattpocock-skills | Matt Pocock's skills: grilling, specs, TDD, code review, domain modeling | [mattpocock/skills](https://github.com/mattpocock/skills) |
@@ -71,6 +73,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | code-simplifier | Agent that simplifies recently changed code without changing behavior | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) |
 | commit-commands | Commands to commit, push and open a PR | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/commit-commands) |
 | harness | Starts, waits for and reads other coding agents (Claude Code, Codex…) in sessions you can watch (needs the Harness CLI) | [autonomous-ai/openharness](https://github.com/autonomous-ai/openharness) |
+| octo | Runs several AI models on the same research, design or coding task and surfaces their disagreements | [nyldn/claude-octopus](https://github.com/nyldn/claude-octopus) |
 | ub-mode (skill) | Uncle Bob's reduced principles for every code change: make it work, make it right, follow practice | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) |
 
 ### Claude's behavior, memory and configuration
@@ -83,6 +86,9 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | claude-md-management | Audits and improves CLAUDE.md files | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management) |
 | claude-code-setup | Analyzes a project and recommends fitting hooks, skills, MCP servers and subagents | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) |
 | skill-creator | Creates, improves and evaluates skills | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) |
+| learning-output-style | Learning mode: asks you to write the meaningful parts of the code at decision points | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/learning-output-style) |
+| session-report | Explorable HTML report of session usage: tokens, cache, subagents, skills, expensive prompts | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/session-report) |
+| collapse-tool-calls | Draws each tool call as one truncated line and hides its output unless it failed (local plugin, read from `~/Projects/claude-mods`) | local |
 
 ### Design and frontend
 | Plugin | What it does | Source |
@@ -90,6 +96,8 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | frontend-design | Polished frontend interfaces that avoid generic-looking output | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design) |
 | ui-ux-pro-max | UI/UX knowledge base: styles, palettes, typography, patterns | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
 | taste-skill | Frontend aesthetic directions: brutalist, minimalist, soft, redesign… | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) |
+| playground | Interactive single-file HTML playgrounds with visual controls and live preview | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/playground) |
+| web-design-guidelines (skill) | Reviews UI code against the Web Interface Guidelines | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) |
 
 ### Documents
 | Plugin | What it does | Source |
@@ -124,6 +132,10 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | playwright | Browser automation and end-to-end testing (Microsoft MCP) | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) |
 | chrome-devtools-mcp | Controls and inspects a real Chrome: network, performance, console | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
 | context7 | Up-to-date documentation for libraries and frameworks | [upstash/context7](https://github.com/upstash/context7) |
+| desktop-commander | Terminal, processes and file operations on the machine (MCP) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/desktop-commander) |
+| computer-use (skill) | Drives desktop apps through screenshots and input when no CLI or API can | [stablyai/orca](https://github.com/stablyai/orca) |
+| find-skills (skill) | Finds and installs skills from the open skills ecosystem | [vercel-labs/skills](https://github.com/vercel-labs/skills) |
+| graphify (skill) | Turns a codebase or documents into a queryable knowledge graph (needs `uv`) | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) |
 
 ## Plugins synced from claude.ai (not handled by the script)
 
