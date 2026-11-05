@@ -37,7 +37,8 @@ installed_marketplaces() {
 }
 
 manifest_ids() { awk -v k="$1" '$1 == k { print $2 }' "$MANIFEST"; }
-marketplace_source() { awk -v n="$1" '$1 == "marketplace" && $2 == n { print $3 }' "$MANIFEST"; }
+# Source plus any extra 'marketplace add' flags (e.g. --sparse) written after it.
+marketplace_source() { awk -v n="$1" '$1 == "marketplace" && $2 == n { $1 = $2 = ""; sub(/^ +/, ""); print }' "$MANIFEST"; }
 skill_source() { awk -v n="$1" '$1 == "skill" && $2 == n { print $3 }' "$MANIFEST"; }
 
 export_new() {
@@ -87,7 +88,7 @@ select_plugins() {
 }
 
 sync_plugins() {
-  local selected skills have_mkt have_plg mkt src id name failed=()
+  local selected skills have_mkt have_plg mkt src id name args failed=()
   selected="$(select_plugins)"
   [[ -n "$selected" ]] || { echo "Nothing selected."; exit 1; }
   # Plugin ids contain "@"; skill names do not.
@@ -104,7 +105,10 @@ sync_plugins() {
       claude plugin marketplace update "$mkt" >/dev/null 2>&1 || failed+=("marketplace update $mkt")
     elif [[ -n "$src" ]]; then
       echo "+ marketplace $mkt ($src)"
-      claude plugin marketplace add "${src/#\~/$HOME}" >/dev/null 2>&1 || failed+=("marketplace add $src")
+      # Split the source from its extra flags first, so a $HOME with spaces stays one argument.
+      read -ra args <<<"$src"
+      args[0]="${args[0]/#\~/$HOME}"
+      claude plugin marketplace add "${args[@]}" >/dev/null 2>&1 || failed+=("marketplace add $src")
     else
       failed+=("no 'marketplace $mkt' line in plugins.txt")
     fi

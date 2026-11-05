@@ -40,7 +40,7 @@ The script is safe to run again: plugins that are already installed are only upd
 
 `plugins.txt` is the single source of truth. Format:
 ```
-marketplace <name> <source>     # source = GitHub owner/repo, git URL, local path (~ allowed), or builtin
+marketplace <name> <source> [flags]   # source = GitHub owner/repo, git URL, local path (~ allowed), or builtin; flags go to `claude plugin marketplace add` (e.g. --sparse)
 plugin <name>@<marketplace>     # installed and updated by the script
 skill <name> <source>           # standalone skill, installed globally with the Skills CLI (needs Node.js), or pypi:<package> with uv
 exclude <name>@<marketplace>    # installed on my machine but kept out of this repo; --export never adds it back
@@ -52,6 +52,8 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 - **collapse-tool-calls** is read from `~/Projects/claude-mods/collapse-tool-calls`: on a machine without that folder its install fails and the script reports it.
 - **graphify** is installed with `uv tool install graphifyy`, then `graphify install` registers the skill.
 - **headroom** needs its CLI: `uv tool install --python 3.13 "headroom-ai[all]"` (or `pip install "headroom-ai[all]"`).
+- **harness** needs the Harness CLI: `curl -fsSL https://harness.autonomous.ai/cli/install.sh | bash`, then `harness login` (the installer also sets up `hn` and edits `~/.tmux.conf`).
+- **rea** needs Node.js (its MCP server comes from the `rea-agents` npm package). Decompiler backends (Ghidra, IDA, jadx…) are optional: see [rea's installation guide](https://github.com/morluto/rea/blob/main/docs/installation.md).
 - **LSP plugins** need the matching language server on your `PATH` (`pyright`, `typescript-language-server`, `clangd`, `rust-analyzer`…).
 - The script clones over HTTPS, so you don't need an SSH key.
 
@@ -70,7 +72,9 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | pr-review-toolkit | Focused review agents: tests, error handling, types, comments | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit) |
 | code-simplifier | Agent that simplifies recently changed code without changing behavior | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) |
 | commit-commands | Commands to commit, push and open a PR | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/commit-commands) |
+| harness | Starts, waits for and reads other coding agents (Claude Code, Codex…) in sessions you can watch (needs the Harness CLI) | [autonomous-ai/openharness](https://github.com/autonomous-ai/openharness) |
 | octo | Runs several AI models on the same research, design or coding task and surfaces their disagreements | [nyldn/claude-octopus](https://github.com/nyldn/claude-octopus) |
+| ub-mode (skill) | Uncle Bob's reduced principles for every code change: make it work, make it right, follow practice | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) |
 
 ### Claude's behavior, memory and configuration
 | Plugin | What it does | Source |
@@ -120,6 +124,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | claude-security | Scans code for vulnerabilities and generates verified patches | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) |
 | security-guidance | Security warnings while editing, plus a diff review at the end of each turn | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
 | security-audit (skill) | Full codebase security audit: recon, coverage-led hunting, adversarial validation, structured report | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) |
+| rea | Reverse engineering through an MCP server: app behavior, runtime, native binaries | [morluto/rea](https://github.com/morluto/rea) |
 
 ### Browser, testing and documentation
 | Plugin | What it does | Source |
