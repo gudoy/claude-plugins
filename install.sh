@@ -88,7 +88,7 @@ select_plugins() {
 }
 
 sync_plugins() {
-  local selected skills have_mkt have_plg mkt src id name failed=()
+  local selected skills have_mkt have_plg mkt src id name args failed=()
   selected="$(select_plugins)"
   [[ -n "$selected" ]] || { echo "Nothing selected."; exit 1; }
   # Plugin ids contain "@"; skill names do not.
@@ -105,8 +105,10 @@ sync_plugins() {
       claude plugin marketplace update "$mkt" >/dev/null 2>&1 || failed+=("marketplace update $mkt")
     elif [[ -n "$src" ]]; then
       echo "+ marketplace $mkt ($src)"
-      # Unquoted on purpose: split the source from its extra flags. A leading ~ becomes $HOME.
-      claude plugin marketplace add ${src/#\~/$HOME} >/dev/null 2>&1 || failed+=("marketplace add $src")
+      # Split the source from its extra flags first, so a $HOME with spaces stays one argument.
+      read -ra args <<<"$src"
+      args[0]="${args[0]/#\~/$HOME}"
+      claude plugin marketplace add "${args[@]}" >/dev/null 2>&1 || failed+=("marketplace add $src")
     else
       failed+=("no 'marketplace $mkt' line in plugins.txt")
     fi

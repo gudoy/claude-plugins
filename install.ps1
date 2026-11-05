@@ -109,7 +109,10 @@ foreach ($mkt in ($selected | ForEach-Object { $_.Split('@')[1] } | Sort-Object 
         claude plugin marketplace update $mkt *> $null; if ($LASTEXITCODE) { $failed += "marketplace update $mkt" }
     } elseif ($src) {
         Write-Host "+ marketplace $mkt ($src)"
-        claude plugin marketplace add @(($src -replace '^~', $HOME) -split ' ') *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
+        # Split the source from its extra flags first, so a $HOME with spaces stays one argument.
+        $mktArgs = @($src -split ' ')
+        $mktArgs[0] = $mktArgs[0] -replace '^~', $HOME
+        claude plugin marketplace add $mktArgs *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
     } else {
         $failed += "no 'marketplace $mkt' line in plugins.txt"
     }
