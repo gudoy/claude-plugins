@@ -37,9 +37,10 @@ function Get-LocalPlugins {
 function Get-ManifestIds([string]$Kind) {
     Get-Content $Manifest | Where-Object { $_ -match "^$Kind\s" } | ForEach-Object { ($_ -split '\s+')[1] }
 }
+# Source plus any extra 'marketplace add' flags (e.g. --sparse) written after it.
 function Get-MarketplaceSource([string]$Name) {
     Get-Content $Manifest | Where-Object { $_ -match "^marketplace\s+$([regex]::Escape($Name))\s" } |
-        ForEach-Object { ($_ -split '\s+')[2] } | Select-Object -First 1
+        ForEach-Object { (($_.Trim() -split '\s+') | Select-Object -Skip 2) -join ' ' } | Select-Object -First 1
 }
 function Get-SkillSource([string]$Name) {
     Get-Content $Manifest | Where-Object { $_ -match "^skill\s+$([regex]::Escape($Name))\s" } |
@@ -108,7 +109,7 @@ foreach ($mkt in ($selected | ForEach-Object { $_.Split('@')[1] } | Sort-Object 
         claude plugin marketplace update $mkt *> $null; if ($LASTEXITCODE) { $failed += "marketplace update $mkt" }
     } elseif ($src) {
         Write-Host "+ marketplace $mkt ($src)"
-        claude plugin marketplace add $src *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
+        claude plugin marketplace add @($src -split ' ') *> $null; if ($LASTEXITCODE) { $failed += "marketplace add $src" }
     } else {
         $failed += "no 'marketplace $mkt' line in plugins.txt"
     }

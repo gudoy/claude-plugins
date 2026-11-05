@@ -37,7 +37,8 @@ installed_marketplaces() {
 }
 
 manifest_ids() { awk -v k="$1" '$1 == k { print $2 }' "$MANIFEST"; }
-marketplace_source() { awk -v n="$1" '$1 == "marketplace" && $2 == n { print $3 }' "$MANIFEST"; }
+# Source plus any extra 'marketplace add' flags (e.g. --sparse) written after it.
+marketplace_source() { awk -v n="$1" '$1 == "marketplace" && $2 == n { $1 = $2 = ""; sub(/^ +/, ""); print }' "$MANIFEST"; }
 skill_source() { awk -v n="$1" '$1 == "skill" && $2 == n { print $3 }' "$MANIFEST"; }
 
 export_new() {
@@ -104,7 +105,8 @@ sync_plugins() {
       claude plugin marketplace update "$mkt" >/dev/null 2>&1 || failed+=("marketplace update $mkt")
     elif [[ -n "$src" ]]; then
       echo "+ marketplace $mkt ($src)"
-      claude plugin marketplace add "$src" >/dev/null 2>&1 || failed+=("marketplace add $src")
+      # Unquoted on purpose: split the source from its extra flags.
+      claude plugin marketplace add $src >/dev/null 2>&1 || failed+=("marketplace add $src")
     else
       failed+=("no 'marketplace $mkt' line in plugins.txt")
     fi

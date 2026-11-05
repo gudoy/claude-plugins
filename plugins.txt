@@ -1,5 +1,6 @@
 # Claude Code plugins manifest, read by install.sh / install.ps1.
-# marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin'
+# marketplace <name> <source>   source = GitHub owner/repo, git URL, or 'builtin';
+#                               extra 'claude plugin marketplace add' flags may follow (e.g. --sparse <paths>)
 # plugin <name@marketplace>     installed and updated by the scripts
 # skill <name> <source>        standalone skill (no plugin), installed globally with the Skills CLI (npx skills)
 # exclude <name@marketplace>    installed on my machine but kept out of this repo (third-party service connectors);
@@ -15,6 +16,8 @@ marketplace ecc https://github.com/affaan-m/ECC.git
 marketplace headroom-marketplace headroomlabs-ai/headroom
 marketplace i-have-adhd ayghri/i-have-adhd
 marketplace karpathy-skills forrestchang/andrej-karpathy-skills
+marketplace openharness autonomous-ai/openharness --sparse .claude-plugin plugins
+marketplace rea morluto/rea
 marketplace superpowers-marketplace obra/superpowers-marketplace
 marketplace taste-skill Leonxlnx/taste-skill
 marketplace ui-ux-pro-max-skill nextlevelbuilder/ui-ux-pro-max-skill
@@ -36,6 +39,7 @@ plugin ecc@ecc
 plugin example-skills@anthropic-agent-skills
 plugin feature-dev@claude-plugins-official
 plugin frontend-design@claude-plugins-official
+plugin harness@openharness
 plugin headroom@headroom-marketplace
 plugin i-have-adhd@i-have-adhd
 plugin kotlin-lsp@claude-plugins-official
@@ -44,6 +48,7 @@ plugin php-lsp@claude-plugins-official
 plugin playwright@claude-plugins-official
 plugin pr-review-toolkit@claude-plugins-official
 plugin pyright-lsp@claude-plugins-official
+plugin rea@rea
 plugin remember@claude-plugins-official
 plugin ruby-lsp@claude-plugins-official
 plugin rust-analyzer-lsp@claude-plugins-official
@@ -57,6 +62,7 @@ plugin ui-ux-pro-max@ui-ux-pro-max-skill
 plugin vue-volar@claude-code-lsps
 
 skill security-audit cloudflare/security-audit-skill
+skill ub-mode unclebob/ub-mode
 
 # Third-party service connectors
 exclude apollo-skills@claude-plugins-official
