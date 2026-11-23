@@ -97,6 +97,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | ui-ux-pro-max | UI/UX knowledge base: styles, palettes, typography, patterns | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
 | taste-skill | Frontend aesthetic directions: brutalist, minimalist, soft, redesign… | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) |
 | playground | Interactive single-file HTML playgrounds with visual controls and live preview | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/playground) |
+| antialgorithm (skill) | Makes Claude name its first, most average creative pick (name, copy, layout, color), then move away from it for a reason taken from the project | [mankidev/antialgorithm](https://github.com/mankidev/antialgorithm) |
 | web-design-guidelines (skill) | Reviews UI code against the Web Interface Guidelines | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) |
 
 ### Documents
@@ -133,7 +134,7 @@ Third-party service connectors (Stripe, Supabase, GitHub, Notion…) are marked 
 | chrome-devtools-mcp | Controls and inspects a real Chrome: network, performance, console | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) |
 | context7 | Up-to-date documentation for libraries and frameworks | [upstash/context7](https://github.com/upstash/context7) |
 | desktop-commander | Terminal, processes and file operations on the machine (MCP) | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/desktop-commander) |
-| computer-use (skill) | Drives desktop apps through screenshots and input when no CLI or API can | [stablyai/orca](https://github.com/stablyai/orca) |
+| orca-computer-use (skill) | Drives desktop apps through screenshots and input when no CLI or API can | [stablyai/orca](https://github.com/stablyai/orca) |
 | find-skills (skill) | Finds and installs skills from the open skills ecosystem | [vercel-labs/skills](https://github.com/vercel-labs/skills) |
 | graphify (skill) | Turns a codebase or documents into a queryable knowledge graph (needs `uv`) | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) |
 

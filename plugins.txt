@@ -69,7 +69,8 @@ plugin typescript-lsp@claude-plugins-official
 plugin ui-ux-pro-max@ui-ux-pro-max-skill
 plugin vue-volar@claude-code-lsps
 
-skill computer-use stablyai/orca
+skill antialgorithm mankidev/antialgorithm
+skill orca-computer-use stablyai/orca
 skill find-skills vercel-labs/skills
 skill graphify pypi:graphifyy
 skill security-audit cloudflare/security-audit-skill
